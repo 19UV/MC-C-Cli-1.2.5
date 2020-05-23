@@ -9,6 +9,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <stdlib.h>
+
 // #include <stdint.h> // uint32, int32, etc
 
 extern "C" {
@@ -20,8 +22,6 @@ extern "C" {
 
 #define SERVER_IP "192.168.1.7"
 #define SERVER_PORT 25565
-
-#define SERVER_PING "\xFE"
 
 #define VERSION_NUMBER 29
 #define MAX_PACKET_LEN 256
@@ -54,24 +54,8 @@ int main(int argc, char const *argv[])
 		printf("\nConnection Failed \n");
 		return -1;
 	}
-	/*
-	send(sock, SERVER_PING, strlen(SERVER_PING), 0);
-	valread = read(sock, buffer, 1024);
-	int current_field = 0;
-	for (int i=4;i<valread;i+=2) {
-		if (buffer[i] == (char)0xA7) {
-			if (current_field == 0) {
-				printf(" ");
-			} else {
-				printf("/");
-			}
-			current_field++;
-		} else {
-			printf("%c", buffer[i]);
-		}
-	}
-	printf("\n");
-	*/
+
+	// p_GetServerData((char*)SERVER_IP, SERVER_PORT);
 
 	char pkt[MAX_PACKET_LEN];
 	int pkt_len = p_buildHandshakePacket((char*)PLAYER_USERNAME, (char*)SERVER_IP, SERVER_PORT, pkt);
@@ -79,11 +63,13 @@ int main(int argc, char const *argv[])
 	send(sock, pkt, pkt_len, 0);
 	valread = read(sock, buffer, 1024);
 
+	/*
 	printf("%i\n", valread);
 	for (int i=0;i<valread;i++) {
 		printf("%02x ", buffer[i]);
 	}
 	printf("\n");
+	*/
 
 	pkt_len = p_buildLoginRequest(VERSION_NUMBER, (char*)PLAYER_USERNAME, pkt);
 	send(sock, pkt, pkt_len, 0);
@@ -92,22 +78,6 @@ int main(int argc, char const *argv[])
 	printf("%i\n", valread);
 	for(int i=0;i<valread;i++) printf("%02x ",buffer[i]);
 	printf("\n");
-
-	/*
-	char pkt[MAX_PACKET_LEN];
-	char username[] = "19UV"; // TODO: Change
-	int pkt_len = p_buildLoginRequest(50, username, pkt);
-
-	send(sock, pkt, pkt_len, 0);
-	send(sock, (char)0, 1, 0);
-
-	valread = read(sock, buffer, 1024);
-
-	printf("%i\n",valread);
-	for (int i=0;i<valread;i++) {
-		printf("%02x ",buffer[i]);
-	}
-	*/
 
 	return 0;
 }

@@ -1,6 +1,8 @@
 # Minecraft 1.2.5 C++ Client
 A project, where, using WebAssembly we attempt to write a Minecraft 1.2.5 client. Should (hopefully) eventually be fully featured, and be able to run on (most) low-end systems.
 
+Note: As of now, it is required that a server be in offline mode for the C++ client to connect.
+
 ## Progression Goals
 1. Impliment Client Core In C++ **(Starting)**
 

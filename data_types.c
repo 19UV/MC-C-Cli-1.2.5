@@ -45,10 +45,3 @@ int writeInt(int value, char* buffer) {
 
 	return bytes_written;
 }
-
-int readInt(char* buffer) {
-	for (int i=3;i>=0;i--) {
-		// Do something
-	}
-	return 1;
-}

@@ -1,50 +1,55 @@
 #include <stdio.h>
 
-/*
+
 #include <sys/socket.h> // Just for p_GetServerData
 #include <arpa/inet.h>
 #include <unistd.h>
-*/
+
 
 #include <string.h>
 
 #include "data_types.h"
 
-/*
+
 int p_GetServerData(char* address, int port) {
-	int s = 0;
-	int v_read;
-
-	struct sockaddr_in s_addr;
-	char buff[1024] = { 0 };
-	if ((s = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	int sock = 0, valread;
+	struct sockaddr_in serv_addr;
+	char buffer[1024] = { 0 };
+	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		printf("\nSocket Creation Error; Could not load server data\n");
+		printf("\n Socket creation error \n");
 		return -1;
 	}
 
-	s_addr.sin_family = AF_INET;
-	s_addr.sin_port = htons(port);
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(port);
 
-	if(inet_pton(AF_INET, address, &s_addr.sin_addr) <= 0)
+	if (inet_pton(AF_INET, address, &serv_addr.sin_addr) <= 0)
 	{
-		printf("\nInvalid Address; Could not load server data\n");
+		printf("\nInvalid address/ Address not supported \n");
 		return -1;
 	}
 
-	if (connect(s, (struct sockaddr_in *)&s_addr, sizeof(s_addr)) < 0)
-	{
-		printf("\nConnection Failed; Could not load server data\n");
-		return -1;
+	send(sock, "\xFE", 1, 0);
+	valread = read(sock, buffer, 1024);
+	int current_field = 0;
+	for (int i=4;i<valread;i+=2) {
+		if (buffer[i] == (char)0xA7) {
+			if (current_field == 0) {
+				printf(" ");
+			} else {
+				printf("/");
+			}
+			current_field++;
+		} else {
+			printf("%c", buffer[i]);
+		}
 	}
-	send(s,"\xFE",4,0);
-	v_read = read(s,buff,1024);
-
-	printf("Got Data\n"); // TODO: Add Feedback
+	printf("\n");
 
 	return 0;
 }
-*/
+
 
 int p_buildLoginRequest(int version, char* user, char* packet) {
 	int index = 0;
